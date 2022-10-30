@@ -73,20 +73,29 @@ final_meta <- rbind(ocean, sum3)
 
 ```{r}
 lnRR <- metafor::escalc(measure = "ROM", m1i = ctrl.mean, m2i = oa.mean, sd1i = ctrl.sd, sd2i = oa.sd, n1i = ctrl.n, n2i = oa.n, data = final_meta,
-    var.names = c("InRR", "V_InRR"))
+    var.names = c("lnRR", "V_lnRR"))
 ```
 
 ## 5. Correct meta-analytic model fitted to the data that controls for the sampling variance of lnRR. The model should include a random effect of study and observation. Use metafor’s rma.mv() function.
 
 ```{r}
 final <- lnRR %>% mutate(residual = 1:n())
-MLMA <- metafor::rma.mv(lnRR~1, v = V_InRR, random = list(~1|Study,~1|Species), method = "REML", test = "t", data=final)
+MLMA <- metafor::rma.mv(yi=lnRR,V=V_lnRR, random = list(~1|Study, ~1|residual), method = "REML", test = "t", dfs = "contain", data=final)
+MLMA
 ```
+
 ## 6. Written paragraph of the findings and what they mean which is supported with a figure. The paragraph should include:
 ### Correct presentation and interpretation of overall meta-analytic mean and measures of uncertainty around the mean estimate (e.g., 95% confidence intervals).
+```{r}
+predict(MLMA, transf = "transf.ztor")
+```
+We can extract the 95% confidence intervals which range from -0.350 to 0.098. In other words, 95% of the time we would expect the true mean to fall between lnRR values of -0.350 to 0.098. It indicates that if we were to repeat the experiment many times, 95% of the confidence intervals constructed would contain the true meta-analytic mean between -0.350 to 0.098.
+
 
 
 ### Measures of heterogeneity in effect size estimates across studies (i.e., I2 and/or prediction intervals - see predict() function in metafor)
+
+
 
 ### Forest plot showing the mean estimate, 95% confidence interval, and prediction interval with clearly labelled axes, number of samples and studies plotted on figure
 
