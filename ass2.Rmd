@@ -15,6 +15,7 @@ GitHub link: https://github.com/Ginny370/ASS2
 library(tidyverse)
 library(metafor)
 library(orchaRd)
+library(flextable)
 ```
 
 # Statistical Analysis and Interpretation
@@ -91,13 +92,37 @@ predict(MLMA, transf = "transf.ztor")
 ```
 We can extract the 95% confidence intervals which range from -0.350 to 0.098. In other words, 95% of the time we would expect the true mean to fall between lnRR values of -0.350 to 0.098. It indicates that if we were to repeat the experiment many times, 95% of the confidence intervals constructed would contain the true meta-analytic mean between -0.350 to 0.098.
 
-
-
 ### Measures of heterogeneity in effect size estimates across studies (i.e., I2 and/or prediction intervals - see predict() function in metafor)
+```{r}
+## Calculate I2
+i2_vals <- orchaRd::i2_ml(MLMA)
 
+## Make a pretty table. First, lets clean up the names of the different I2
+## estimates. Lets remove I2_. It's a string, so, we can use some regular
+## expressions to fix that. `gsub` is pretty useful. You put a pattern in and
+## tell it what you would like to replace the text with. In this case, just
+## blank will do! Then, we'll make the first letter of what is left
+## capitalised.
+i2 <- tibble(type = firstup(gsub("I2_", "", names(i2_vals))), I2 = i2_vals)
+
+
+# Make a pretty table. 
+flextable(i2) %>%
+    align(part = "header", align = "center") %>%
+    compose(part = "header", j = 1, value = as_paragraph(as_b("Type"))) %>%
+    compose(part = "header", j = 2, value = as_paragraph(as_b("I"), as_b(as_sup("2")),
+        as_b("(%)")))
+```
 
 
 ### Forest plot showing the mean estimate, 95% confidence interval, and prediction interval with clearly labelled axes, number of samples and studies plotted on figure
+
+
+
+```{r}
+# Make an orchard plot using the model object
+orchaRd::orchard_plot(MLMA, mod = 1, group = "Life.stage", data = final,xlab = "log response ratio (lnRR) effect", angle = 45)
+```
 
 ## 7.  plot for visually assessing the possibility of publication bias.
 
