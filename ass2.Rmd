@@ -185,7 +185,6 @@ It means that the time-log may contribute to the publication bias.
 
 # 12. Identify any studies contributing to publication bias. How do your updated meta-analysis results compare with a meta-analysis by Clement et. al. (2022)? Are there any concerns about these studies? If so, describe using references to existing papers what concerns have been raised?
 
-We play around with meta analysis and I think my our updated meta-analysis results compare with a meta-analysis by Clement et. al. (2022) has some similar point.
+We play around with meta analysis and I think my our updated meta-analysis results compared with a meta-analysis by Clement et. al. (2022) has some similar point.
 
-
-
+And maybe we still need more analysis to figure out what is the actual reason conducting to our publication bias.
