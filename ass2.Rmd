@@ -137,7 +137,7 @@ MLMR
 # Make an orchard plot using the model object, Orchard plot showing the mean Zr for correlation coefficients estimated between
 orchaRd::orchard_plot(MLMR, mod = "Life.stage", group = "Study", data = final,xlab = "log response ratio (lnRR) effect", angle = 45)
 ```
-Figure1. Orchard plot showing the mean lnRR for correlation coefficients estimated among life stage. 
+Figure1. Orchard plot showing the mean lnRR for correlation coefficients estimated among life stage. It does not shows that the life stage will affect the effect size.
 
 ## 7.  plot for visually assessing the possibility of publication bias.
 ```{r, Figure2}
@@ -172,12 +172,20 @@ r2_time <- orchaRd::r2_ml(metareg_time)
 ## 10. Formal meta-regression model that includes inverse sampling variance (i.e., 1vlnRR) to test for file-drawer biases
 
 ```{r}
-lvlnRR <- rma.mv(lnRR ~ (1 / V_lnRR), v = V_lnRR, random = list(~1 | Study, ~1|residual), test = "t", dfs = "contain", data = final)
+lvlnRR <- rma.mv(lnRR ~ (1 / V_lnRR), V = V_lnRR, random = list(~1 | Study, ~1 | residual), test = "t", dfs = "contain", data = final)
+summary(lvlnRR)
 ```
 ## 11. A written paragraph that discusses the potential for publication bias based on the meta-regression results. What type of publication bias, if any, appears to be present in the data? If publication bias is present, what does it mean and what might be contributing to such bias?
 
-Figure2 shows that there is a bias in 
+Figure2 shows that there exists a publication bias.And there is a funnel asymmetry, showing a bunch of missing effect sizes in the bottom right corner of the funnel. In other words there is a negative correlation between BMR and fitness.
+
+In order to why will publicaion exist, we would like to assume that it would be a time-lag bias.Figure3 shows that there is a positive relationship with year and difference between the mean activity of treatment. The earlier year studies have much higher sampling variance (i.e., lower precision), just like we might expect.
+
+It means that the time-log may contribute to the publication bias.
 
 # 12. Identify any studies contributing to publication bias. How do your updated meta-analysis results compare with a meta-analysis by Clement et. al. (2022)? Are there any concerns about these studies? If so, describe using references to existing papers what concerns have been raised?
+
+We play around with meta analysis and I think my our updated meta-analysis results compare with a meta-analysis by Clement et. al. (2022) has some similar point.
+
 
 
