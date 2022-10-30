@@ -158,7 +158,7 @@ r2_time <- orchaRd::r2_ml(metareg_time)
 ## 10. Formal meta-regression model that includes inverse sampling variance (i.e., 1vlnRR) to test for file-drawer biases
 
 ```{r}
-lvlnRR <- rma.mv(lnRR ~ (1 / lnRR_var), v = V_lnRR, random = list(~1 | Study, ~1|residual), test = "t", dfs = "contain", data = data)
+lvlnRR <- rma.mv(lnRR ~ (1 / lnRR_var), v = V_lnRR, random = list(~1 | Study, ~1|residual), test = "t", dfs = "contain", data = final)
 ```
 
 
