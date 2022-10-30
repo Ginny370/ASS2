@@ -117,21 +117,52 @@ flextable(i2) %>%
 
 ### Forest plot showing the mean estimate, 95% confidence interval, and prediction interval with clearly labelled axes, number of samples and studies plotted on figure
 
-
+```{r}
+MLMR <- metafor::rma.mv(lnRR ~ Life.stage, V = V_lnRR, method = "REML", random = list( ~1 | Study, ~1 | residual), dfs = "contain", test = "t", data = final)
+MLMR
+```
 
 ```{r}
 # Make an orchard plot using the model object
-orchaRd::orchard_plot(MLMA, mod = 1, group = "Life.stage", data = final,xlab = "log response ratio (lnRR) effect", angle = 45)
+orchaRd::orchard_plot(MLMR, mod = "Life.stage", group = "Study", data = final,xlab = "log response ratio (lnRR) effect", angle = 45)
 ```
 
 ## 7.  plot for visually assessing the possibility of publication bias.
+```{r}
+metafor::funnel(x = final$lnRR, vi = final$V_lnRR, yaxis = "seinv",
+    digits = 2, xlim=c(-10,10), ylim=c(1,150),level = c(0.1, 0.05, 0.01), shade = c("white", "cyan1", "cyan4", "darkblue"),col="orange",
+    las = 1, xlab = "Correlation Coefficient (r)", atransf = tanh, legend = TRUE)
+```
 
 ## 8. Time-lag plot assessing how effect sizes may or may not have changed through time.
 
+```{r}
+ggplot(final, aes(y = lnRR, x = Year..print., size = 1/sqrt(V_lnRR))) + geom_point(alpha = 0.3) +
+    geom_smooth(method = lm, col = "red", show.legend = FALSE) + labs(x = "Publication Year",
+    y = "log response ratio (lnRR) effect", size = "Precision (1/SE)") +
+    theme_classic()
+```
+
 ## 9. Formal meta-regression model that includes year as a moderator (fixed effect) to test for time-lag bias
+
+```{r}
+metareg_time <- rma.mv(lnRR ~ Year..print., V = V_lnRR, random = list(~1 | Study, ~1 | residual),
+    test = "t", dfs = "contain", data = final)
+summary(metareg_time)
+```
+
+```{r}
+r2_time <- orchaRd::r2_ml(metareg_time)
+```
 
 ## 10. Formal meta-regression model that includes inverse sampling variance (i.e., 1vlnRR) to test for file-drawer biases
 
+```{r}
+lvlnRR <- rma.mv(lnRR ~ (1 / lnRR_var), v = V_lnRR, random = list(~1 | Study, ~1|residual), test = "t", dfs = "contain", data = data)
+```
+
+
 ## 11. A written paragraph that discusses the potential for publication bias based on the meta-regression results. What type of publication bias, if any, appears to be present in the data? If publication bias is present, what does it mean and what might be contributing to such bias?
+
 
 # 12. Identify any studies contributing to publication bias. How do your updated meta-analysis results compare with a meta-analysis by Clement et. al. (2022)? Are there any concerns about these studies? If so, describe using references to existing papers what concerns have been raised?
